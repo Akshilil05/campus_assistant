@@ -6,7 +6,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { LogOut, MapPin, Filter as FilterIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
-
 interface Student {
   full_name: string;
   student_id: string;
@@ -160,23 +159,30 @@ const StaffDashboard = () => {
           </button>
         </Card>
 
+        {/* Filter Section */}
         <Card className="p-6 mb-6">
           <div className="flex items-center gap-2 mb-4">
             <FilterIcon className="w-5 h-5" />
-            <span className="font-semibold">Filter by type:</span>
+            <span className="font-bold">Filter by type:</span>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            {['all', 'high', 'moderate', 'general'].map(type => (
-              <button
-                key={type}
-                className={`px-3 py-1 rounded ${
-                  filter === type ? 'bg-white text-black' : 'border border-white text-white'
-                }`}
-                onClick={() => setFilter(type as any)}
-              >
-                {type === 'all' ? 'All' : `${type.charAt(0).toUpperCase() + type.slice(1)} Alert`}
-              </button>
-            ))}
+          <div className="flex gap-3 flex-wrap">
+            {['all', 'high', 'moderate', 'general'].map(type => {
+              let bgClass = 'bg-gray-700 text-white';
+              if (type === 'high') bgClass = filter === 'high' ? 'bg-red-600 text-white' : 'bg-red-500 text-white';
+              if (type === 'moderate') bgClass = filter === 'moderate' ? 'bg-orange-600 text-white' : 'bg-orange-500 text-white';
+              if (type === 'general') bgClass = filter === 'general' ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white';
+              if (type === 'all') bgClass = filter === 'all' ? 'bg-white text-black' : 'bg-gray-900 text-white';
+
+              return (
+                <button
+                  key={type}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:opacity-90 ${bgClass}`}
+                  onClick={() => setFilter(type as 'all' | 'high' | 'moderate' | 'general')}
+                >
+                  {type === 'all' ? 'All' : `${type.charAt(0).toUpperCase() + type.slice(1)} Alert`}
+                </button>
+              );
+            })}
           </div>
         </Card>
 
@@ -185,7 +191,6 @@ const StaffDashboard = () => {
         <div className="space-y-4 mb-8">
           {freshAlerts.length ? freshAlerts.map(alert => (
             <Card key={alert.id} className="p-6 relative">
-              {/* Checkbox top-right */}
               <input
                 type="checkbox"
                 className="absolute top-3 right-3 w-5 h-5"
